@@ -1,24 +1,24 @@
 /**
  * db.js - Camada de Dados, Catálogo de Imóveis, CRM de Leads,
  * IA Imobiliária, Integração Multi-Portais e Configurações de Remarketing
- * Vanguard Prime Imóveis — Demonstração Oficial NEXO CRM
+ * Rico Ricardo Imóveis — CRECI 038613-J (Santo André - SP)
  */
 
-const STORAGE_IMOVEIS_KEY = 'nexodemo_estoque_v1';
-const STORAGE_CONFIG_KEY = 'nexodemo_config_v1';
-const STORAGE_LEADS_KEY = 'nexodemo_leads_v1';
-const STORAGE_SENHA_KEY = 'nexodemo_senha_admin';
-const STORAGE_CONTRATOS_KEY = 'nexodemo_contratos_locacao_v1';
-const STORAGE_VISTORIAS_KEY = 'nexodemo_vistorias_v1';
-const STORAGE_TERMOS_VISITA_KEY = 'nexodemo_termos_visita_v1';
-const STORAGE_CORRETORES_KEY = 'nexodemo_corretores_v1';
-const STORAGE_SOFIA_KEY = 'nexodemo_sofia_config_v2';
-const STORAGE_LIXEIRA_KEY = 'nexodemo_lixeira_v1';
-const STORAGE_AUDITORIA_KEY = 'nexodemo_audit_log_v1';
-const STORAGE_PERFIL_KEY = 'nexodemo_perfil_ativo_v1';
-const STORAGE_PERMISSOES_KEY = 'nexodemo_permissoes_v1';
-const STORAGE_LICENCA_KEY = 'nexodemo_licenca_v1';
-const STORAGE_MASTER_CLIENTES_KEY = 'nexodemo_master_clientes_v1';
+const STORAGE_IMOVEIS_KEY = 'ricoricardo_estoque_v1';
+const STORAGE_CONFIG_KEY = 'ricoricardo_config_v1';
+const STORAGE_LEADS_KEY = 'ricoricardo_leads_v1';
+const STORAGE_SENHA_KEY = 'ricoricardo_senha_admin';
+const STORAGE_CONTRATOS_KEY = 'ricoricardo_contratos_locacao_v1';
+const STORAGE_VISTORIAS_KEY = 'ricoricardo_vistorias_v1';
+const STORAGE_TERMOS_VISITA_KEY = 'ricoricardo_termos_visita_v1';
+const STORAGE_CORRETORES_KEY = 'ricoricardo_corretores_v1';
+const STORAGE_SOFIA_KEY = 'ricoricardo_sofia_config_v2';
+const STORAGE_LIXEIRA_KEY = 'ricoricardo_lixeira_v1';
+const STORAGE_AUDITORIA_KEY = 'ricoricardo_audit_log_v1';
+const STORAGE_PERFIL_KEY = 'ricoricardo_perfil_ativo_v1';
+const STORAGE_PERMISSOES_KEY = 'ricoricardo_permissoes_v1';
+const STORAGE_LICENCA_KEY = 'ricoricardo_licenca_v1';
+const STORAGE_MASTER_CLIENTES_KEY = 'ricoricardo_master_clientes_v1';
 
 // Matriz de Permissões Granulares & Governança Corporativa (RBAC Enterprise)
 const PERMISSOES_PADRAO_ENTERPRISE = {
@@ -124,16 +124,16 @@ const PLANOS_NEXO = {
   }
 };
 
-// Licença do Tenant Ativo (Demonstração Vanguard Prime — Degustação 4 Dias Ativa)
+// Licença do Tenant Ativo (Padrão Oficial)
 const LICENCA_PADRAO = {
-  planoId: 'prime',
-  status: 'trial', // Na demonstração, inicia com 4 dias de teste grátis ativo
+  planoId: 'pro',
+  status: 'active', // 'trial' | 'active' | 'grace_period' | 'blocked'
   dataInicio: new Date().toISOString(),
-  dataVencimento: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+  dataVencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
   diasTesteTotal: 4,
-  valorMensal: 150.00,
+  valorMensal: 250.00,
   taxaAdesaoSetup: 600.00,
-  adesaoPaga: false,
+  adesaoPaga: true,
   chavePixCobranca: 'ricardo.nexo@pix.com.br',
   titularPix: 'Ricardo — NEXO CRM',
   cidadePix: 'Santo André - SP'
@@ -158,14 +158,14 @@ const CLIENTES_MASTER_INICIAIS = [
   },
   {
     id: 'cli-02',
-    nomeImobiliaria: 'Vanguard Prime Imóveis (Demo)',
-    responsavel: 'Demonstração Interativa',
+    nomeImobiliaria: 'Vanguard Prime Imóveis',
+    responsavel: 'Paulo Fontes',
     whatsapp: '11999998888',
     cidade: 'São Paulo - SP',
     planoId: 'prime',
     status: 'trial',
-    dataInicio: new Date().toLocaleDateString('pt-BR'),
-    dataVencimento: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+    dataInicio: '02/10/2026',
+    dataVencimento: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
     valorMensal: 150.00,
     adesaoPaga: false,
     totalImoveis: 8,
@@ -203,46 +203,46 @@ const CLIENTES_MASTER_INICIAIS = [
   }
 ];
 
-// Configurações Oficiais da Imobiliária Conceito (Demonstração NEXO CRM)
+// Configurações Oficiais da Rico Ricardo Imóveis
 const CONFIG_IMOB_PADRAO = {
-  nome: 'Vanguard Prime Imóveis',
-  slogan: 'Imobiliária Conceito & Gestão de Alto Padrão — Demonstração Oficial NEXO CRM',
-  creci: 'CRECI 00000-J',
-  telefone: '(11) 99999-9999',
-  whatsapp: '5511999999999',
-  email: 'contato@nexocrm.com.br',
-  endereco: 'Av. Paulista, 1000 - Jardins, São Paulo - SP',
-  cidade: 'São Paulo - SP',
-  googleMapsUrl: 'https://maps.google.com',
-  horarioSemana: 'Segunda a Sexta: 08:30 às 19:00',
-  horarioSabado: 'Sábados: 09:00 às 15:00',
-  horarioDomingo: 'Plantão de Atendimento Digital 24h',
+  nome: 'Rico Ricardo Imóveis',
+  slogan: 'A sua imobiliária em Santo André — Os melhores imóveis para compra e locação',
+  creci: 'CRECI 038613-J',
+  telefone: '(11) 4474-5966',
+  whatsapp: '5511914879393', // WhatsApp oficial da Rico Ricardo Imóveis
+  email: 'contato@ricoricardoimoveis.com.br',
+  endereco: 'Rua Rogério Giorgi, 166 - Parque Marajoara, Santo André - SP',
+  cidade: 'Santo André - SP',
+  googleMapsUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3654.4925827725734!2d-46.502844823901615!3d-23.658249878732158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce42d9dfd7b7db%3A0xbcf4a54823812d1b!2sR.%20Rog%C3%A9rio%20Giorgi%2C%20166%20-%20Parque%20Marajoara%2C%20Santo%20Andr%C3%A9%20-%20SP%2C%2009112-130!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr',
+  horarioSemana: 'Segunda a Sexta: 08:30 às 18:30',
+  horarioSabado: 'Sábados: 09:00 às 14:00',
+  horarioDomingo: 'Plantão de Atendimento WhatsApp',
   horaInicioSemana: 8.5,
-  horaFimSemana: 19.0,
+  horaFimSemana: 18.5,
   horaInicioSabado: 9,
-  horaFimSabado: 15,
+  horaFimSabado: 14,
   videoHero: 'https://www.youtube.com/watch?v=9JfFt3t7OfE',
-  instagram: 'https://instagram.com',
-  facebook: 'https://facebook.com',
+  instagram: 'https://www.instagram.com/ricoricardoimoveis/',
+  facebook: 'https://www.facebook.com/ricoricardoimoveis/',
   youtube: 'https://youtube.com',
   tiktok: 'https://tiktok.com',
   webhookLeads: '',
 
-  // Remarketing e Rastreamento de Demonstração
-  pixelMetaId: '',
-  googleAdsId: '',
-  googleAnalyticsId: '',
+  // Remarketing e Rastreamento Oficial da Rico Ricardo Imóveis
+  pixelMetaId: '123456789012345',
+  googleAdsId: 'AW-18443399185', // Google Ads real da Rico Ricardo Imóveis
+  googleAnalyticsId: 'G-ABCD1234EF',
 
   // Configuração Fiscal e Emissão de NFS-e (Prefeitura / Receita)
-  cnpj: '00.123.456/0001-00',
-  razaoSocial: 'Vanguard Prime Gestão Imobiliária & Locações Ltda',
-  inscricaoMunicipal: '998877-0',
+  cnpj: '38.613.000/0001-99',
+  razaoSocial: 'Rico Ricardo Empreendimentos Imobiliários Ltda',
+  inscricaoMunicipal: '184920-5',
   regimeTributario: 'simples', // simples | lucro_presumido | lucro_real
   cnae: '6821-8/02 - Gestão e administração da propriedade imobiliária',
   itemLc116: '10.05 - Agenciamento, corretagem ou intermediação de bens móveis ou imóveis',
   aliquotaIss: 2.0,
-  provedorFiscal: 'Focus NFe (Padrão Nacional)',
-  certificadoDigitalStatus: 'Certificado A1 Válido (Demonstração Ativa)',
+  provedorFiscal: 'Focus NFe (Padrão Municipal)',
+  certificadoDigitalStatus: 'Certificado A1 Válido (e-CNPJ Ativo até 12/2027)',
 
   // Configuração Multi-Portais Ativos
   portaisAtivos: {
@@ -298,9 +298,9 @@ const IMOVEIS_INICIAIS = [
     ],
     portaisSincronizados: ['zap', 'vivareal', 'olx', 'imovelweb', 'chavesnamao', 'mercadolivre'],
     corretorResponsavel: {
-      nome: 'Vanguard Prime Imóveis',
-      creci: '00000-J',
-      telefone: '(11) 99999-9999'
+      nome: 'Rico Ricardo Imóveis',
+      creci: '038613-J',
+      telefone: '(11) 91487-9393'
     }
   },
   {
@@ -668,36 +668,36 @@ const IMOVEIS_INICIAIS = [
 const CORRETORES_INICIAIS = [
   {
     id: 'corretor-1',
-    nome: 'Diretoria Comercial',
-    creci: '00001-F',
-    whatsapp: '5511999999999',
-    email: 'diretoria@nexocrm.com.br',
-    especialidade: 'Direção Geral & Grandes Negócios',
-    leadsAtendidos: 24,
+    nome: 'Rico Ricardo',
+    creci: '038613-J',
+    whatsapp: '5511914879393',
+    email: 'contato@ricoricardoimoveis.com.br',
+    especialidade: 'Direção Geral & Vendas',
+    leadsAtendidos: 18,
     ativo: true,
     foto: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80'
   },
   {
     id: 'corretor-2',
-    nome: 'Carlos Eduardo Mendes',
-    creci: '00002-F',
-    whatsapp: '5511988888888',
-    email: 'carlos@nexocrm.com.br',
-    especialidade: 'Casas de Condomínio & Lançamentos',
-    leadsAtendidos: 18,
+    nome: 'Atendimento & Vendas',
+    creci: '038613-J',
+    whatsapp: '5511914879393',
+    email: 'contato@ricoricardoimoveis.com.br',
+    especialidade: 'Casas, Sobrados & Apartamentos em Santo André',
+    leadsAtendidos: 14,
     ativo: true,
-    foto: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80'
+    foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80'
   },
   {
     id: 'corretor-3',
-    nome: 'Mariana Siqueira',
-    creci: '00003-F',
-    whatsapp: '5511977777777',
-    email: 'mariana@nexocrm.com.br',
-    especialidade: 'Apartamentos & Gestão de Locação',
-    leadsAtendidos: 15,
+    nome: 'Plantão de Locação',
+    creci: '038613-J',
+    whatsapp: '5511914879393',
+    email: 'contato@ricoricardoimoveis.com.br',
+    especialidade: 'Administração de Locações e Contratos',
+    leadsAtendidos: 9,
     ativo: true,
-    foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80'
+    foto: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&q=80'
   }
 ];
 
@@ -905,8 +905,8 @@ const CONFIG_SOFIA_PADRAO = {
   nome: 'Sofia IA',
   cargo: 'Consultora Imobiliária Virtual 24h',
   tomVoz: 'Sofisticado, acolhedor e focado em qualificação rápida',
-  mensagemBoasVindas: 'Olá! Sou a Sofia, consultora inteligente da Vanguard Prime Imóveis. Conte comigo para encontrar a cobertura, apartamento ou casa dos seus sonhos. O que você procura hoje: Comprar ou Alugar?',
-  whatsappDestino: '5511999999999'
+  mensagemBoasVindas: 'Olá! Sou a Sofia, consultora inteligente da Rico Ricardo Imóveis. Conte comigo para encontrar a cobertura, apartamento ou casa dos seus sonhos em Santo André e região. O que você procura hoje: Comprar ou Alugar?',
+  whatsappDestino: '5511914879393'
 };
 
 // Trilha de Auditoria Inicial (Audit Log de Segurança & Governança)
@@ -1114,6 +1114,45 @@ const DB = {
     }
 
     return imovel;
+  },
+
+  adicionarImoveisEmLote(novosImoveis, modo = 'mesclar') {
+    if (!Array.isArray(novosImoveis) || novosImoveis.length === 0) return [];
+    
+    // Assegura campos essenciais e IDs únicos
+    const normalizados = novosImoveis.map((im, idx) => {
+      const obj = { ...im };
+      if (!obj.id) obj.id = 'imob-mig-' + Date.now() + '-' + idx;
+      if (!obj.portaisSincronizados) {
+        obj.portaisSincronizados = ['zap', 'vivareal', 'olx', 'imovelweb', 'chavesnamao'];
+      }
+      return obj;
+    });
+
+    let resultadoFinal = [];
+    if (modo === 'substituir') {
+      resultadoFinal = normalizados;
+    } else {
+      // Mesclar: adiciona novos sem duplicar códigos existentes
+      const existentes = this.getImoveis();
+      const codigosExistentes = new Set(existentes.map(im => (im.codigo || '').trim().toLowerCase()).filter(Boolean));
+      const novosFiltrados = normalizados.filter(im => {
+        const cod = (im.codigo || '').trim().toLowerCase();
+        return !cod || !codigosExistentes.has(cod);
+      });
+      resultadoFinal = [...novosFiltrados, ...existentes];
+    }
+
+    this.salvarImoveis(resultadoFinal);
+
+    // Sincronização em nuvem via Supabase (em segundo plano)
+    if (window.NexoSupabase && window.NexoSupabase.isConfigured()) {
+      normalizados.forEach(im => {
+        this.enviarImovelSupabase(im).catch(e => console.warn('[Supabase] Falha ao sincronizar lote:', e));
+      });
+    }
+
+    return resultadoFinal;
   },
 
   atualizarImovel(id, dadosAtualizados) {
@@ -1895,7 +1934,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
   getSofiaConfig() {
     try {
       // Limpa cache antigo v1 se existir
-      localStorage.removeItem('nexodemo_sofia_config_v1');
+      localStorage.removeItem('ricoricardo_sofia_config_v1');
       const data = localStorage.getItem(STORAGE_SOFIA_KEY);
       if (data) {
         const parsed = JSON.parse(data);
@@ -2535,7 +2574,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
 
     return {
       licenca: lic,
-      plano: PLANOS_NEXO[lic.planoId] || PLANOS_NEXO.prime,
+      plano: PLANOS_NEXO[lic.planoId] || PLANOS_NEXO.pro,
       diasRestantes: diffDias,
       isTrial: lic.status === 'trial',
       isBloqueado: lic.status === 'blocked',
