@@ -1,26 +1,26 @@
 /**
  * db.js - Camada de Dados, Catálogo de Imóveis, CRM de Leads,
  * IA Imobiliária, Integração Multi-Portais e Configurações de Remarketing
- * Rico Ricardo Imóveis — CRECI 038613-J (Santo André - SP)
+ * NEXO CRM Showroom de Demonstração — Imobiliária Modelo (São Paulo - SP)
  */
 
-const STORAGE_IMOVEIS_KEY = 'ricoricardo_estoque_v1';
-const STORAGE_CONFIG_KEY = 'ricoricardo_config_v1';
-const STORAGE_LEADS_KEY = 'ricoricardo_leads_v1';
-const STORAGE_SENHA_KEY = 'ricoricardo_senha_admin';
-const STORAGE_CONTRATOS_KEY = 'ricoricardo_contratos_locacao_v1';
-const STORAGE_VISTORIAS_KEY = 'ricoricardo_vistorias_v1';
-const STORAGE_TERMOS_VISITA_KEY = 'ricoricardo_termos_visita_v1';
-const STORAGE_CORRETORES_KEY = 'ricoricardo_corretores_v1';
-const STORAGE_SOFIA_KEY = 'ricoricardo_sofia_config_v2';
-const STORAGE_LIXEIRA_KEY = 'ricoricardo_lixeira_v1';
-const STORAGE_AUDITORIA_KEY = 'ricoricardo_audit_log_v1';
-const STORAGE_PERFIL_KEY = 'ricoricardo_perfil_ativo_v1';
-const STORAGE_PERMISSOES_KEY = 'ricoricardo_permissoes_v1';
-const STORAGE_LICENCA_KEY = 'ricoricardo_licenca_v1';
-const STORAGE_MASTER_CLIENTES_KEY = 'ricoricardo_master_clientes_v1';
-const STORAGE_USUARIOS_KEY = 'ricoricardo_usuarios_v1';
-const STORAGE_USUARIO_ATIVO_KEY = 'ricoricardo_usuario_ativo_v1';
+const STORAGE_IMOVEIS_KEY = 'nexodemo_estoque_v1';
+const STORAGE_CONFIG_KEY = 'nexodemo_config_v1';
+const STORAGE_LEADS_KEY = 'nexodemo_leads_v1';
+const STORAGE_SENHA_KEY = 'nexodemo_senha_admin';
+const STORAGE_CONTRATOS_KEY = 'nexodemo_contratos_locacao_v1';
+const STORAGE_VISTORIAS_KEY = 'nexodemo_vistorias_v1';
+const STORAGE_TERMOS_VISITA_KEY = 'nexodemo_termos_visita_v1';
+const STORAGE_CORRETORES_KEY = 'nexodemo_corretores_v1';
+const STORAGE_SOFIA_KEY = 'nexodemo_sofia_config_v2';
+const STORAGE_LIXEIRA_KEY = 'nexodemo_lixeira_v1';
+const STORAGE_AUDITORIA_KEY = 'nexodemo_audit_log_v1';
+const STORAGE_PERFIL_KEY = 'nexodemo_perfil_ativo_v1';
+const STORAGE_PERMISSOES_KEY = 'nexodemo_permissoes_v1';
+const STORAGE_LICENCA_KEY = 'nexodemo_licenca_v1';
+const STORAGE_MASTER_CLIENTES_KEY = 'nexodemo_master_clientes_v1';
+const STORAGE_USUARIOS_KEY = 'nexodemo_usuarios_v1';
+const STORAGE_USUARIO_ATIVO_KEY = 'nexodemo_usuario_ativo_v1';
 
 // Matriz de Permissões Granulares & Governança Corporativa (RBAC Enterprise)
 const PERMISSOES_PADRAO_ENTERPRISE = {
@@ -146,7 +146,7 @@ const LICENCA_PADRAO = {
 const CLIENTES_MASTER_INICIAIS = [
   {
     id: 'cli-01',
-    nomeImobiliaria: 'Imobiliária Rico Ricardo',
+    nomeImobiliaria: 'Alpha Prime Imóveis',
     responsavel: 'Ricardo Oliveira',
     whatsapp: '11914879393',
     cidade: 'Santo André - SP',
@@ -206,17 +206,18 @@ const CLIENTES_MASTER_INICIAIS = [
   }
 ];
 
-// Configurações Oficiais da Rico Ricardo Imóveis
+// Configurações Oficiais da Imobiliária Modelo (Showroom de Demonstração NEXO)
 const CONFIG_IMOB_PADRAO = {
-  nome: 'Rico Ricardo Imóveis',
-  slogan: 'A sua imobiliária em Santo André — Os melhores imóveis para compra e locação',
-  creci: 'CRECI 038613-J',
-  telefone: '(11) 4474-5966',
-  whatsapp: '5511914879393', // WhatsApp oficial da Rico Ricardo Imóveis
-  email: 'contato@ricoricardoimoveis.com.br',
-  endereco: 'Rua Rogério Giorgi, 166 - Parque Marajoara, Santo André - SP',
-  cidade: 'Santo André - SP',
-  googleMapsUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3654.4925827725734!2d-46.502844823901615!3d-23.658249878732158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce42d9dfd7b7db%3A0xbcf4a54823812d1b!2sR.%20Rog%C3%A9rio%20Giorgi%2C%20166%20-%20Parque%20Marajoara%2C%20Santo%20Andr%C3%A9%20-%20SP%2C%2009112-130!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr',
+  nome: 'Imobiliária Modelo',
+  nomeFantasia: 'Imobiliária Modelo Showroom',
+  slogan: 'Plataforma Inteligente de Demonstração — O padrão dos melhores portais imobiliários',
+  creci: 'CRECI 00000-J',
+  telefone: '(11) 4004-0000',
+  whatsapp: '5511914879393', // WhatsApp comercial do Ricardo para atendimento de leads da demo
+  email: 'contato@imobiliariamodelo.com.br',
+  endereco: 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
+  cidade: 'São Paulo - SP',
+  googleMapsUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1975850259837!2d-46.6543160239046!3d-23.56134907879953!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr',
   horarioSemana: 'Segunda a Sexta: 08:30 às 18:30',
   horarioSabado: 'Sábados: 09:00 às 14:00',
   horarioDomingo: 'Plantão de Atendimento WhatsApp',
@@ -225,27 +226,27 @@ const CONFIG_IMOB_PADRAO = {
   horaInicioSabado: 9,
   horaFimSabado: 14,
   videoHero: 'https://www.youtube.com/watch?v=9JfFt3t7OfE',
-  instagram: 'https://www.instagram.com/ricoricardoimoveis/',
-  facebook: 'https://www.facebook.com/ricoricardoimoveis/',
+  instagram: 'https://www.instagram.com/nexocrm/',
+  facebook: 'https://www.facebook.com/nexocrm/',
   youtube: 'https://youtube.com',
   tiktok: 'https://tiktok.com',
   webhookLeads: '',
 
-  // Remarketing e Rastreamento Oficial da Rico Ricardo Imóveis
+  // Remarketing e Rastreamento de Demonstração
   pixelMetaId: '123456789012345',
-  googleAdsId: 'AW-18443399185', // Google Ads real da Rico Ricardo Imóveis
-  googleAnalyticsId: 'G-ABCD1234EF',
+  googleAdsId: 'AW-00000000000',
+  googleAnalyticsId: 'G-DEMO123456',
 
-  // Configuração Fiscal e Emissão de NFS-e (Prefeitura / Receita)
-  cnpj: '38.613.000/0001-99',
-  razaoSocial: 'Rico Ricardo Empreendimentos Imobiliários Ltda',
-  inscricaoMunicipal: '184920-5',
+  // Configuração Fiscal e Emissão de NFS-e (Prefeitura / Receita - Modelo)
+  cnpj: '00.000.000/0001-00',
+  razaoSocial: 'Imobiliária Modelo Ltda (Showroom)',
+  inscricaoMunicipal: '000000-0',
   regimeTributario: 'simples', // simples | lucro_presumido | lucro_real
   cnae: '6821-8/02 - Gestão e administração da propriedade imobiliária',
   itemLc116: '10.05 - Agenciamento, corretagem ou intermediação de bens móveis ou imóveis',
   aliquotaIss: 2.0,
   provedorFiscal: 'Focus NFe (Padrão Municipal)',
-  certificadoDigitalStatus: 'Certificado A1 Válido (e-CNPJ Ativo até 12/2027)',
+  certificadoDigitalStatus: 'Certificado Digital A1 Demonstrativo',
 
   // Configuração Multi-Portais Ativos
   portaisAtivos: {
@@ -301,9 +302,9 @@ const IMOVEIS_INICIAIS = [
     ],
     portaisSincronizados: ['zap', 'vivareal', 'olx', 'imovelweb', 'chavesnamao', 'mercadolivre'],
     corretorResponsavel: {
-      nome: 'Rico Ricardo Imóveis',
-      creci: '038613-J',
-      telefone: '(11) 91487-9393'
+      nome: 'Imobiliária Modelo Showroom',
+      creci: '00000-J',
+      telefone: '(11) 4004-0000'
     }
   },
   {
@@ -671,14 +672,14 @@ const IMOVEIS_INICIAIS = [
 const CORRETORES_INICIAIS = [
   {
     id: 'corretor-1',
-    nome: 'Rico Ricardo',
-    creci: '038613-J',
+    nome: 'Roberto Albuquerque',
+    creci: '102.340-F',
     whatsapp: '5511914879393',
     telefone: '5511914879393',
-    email: 'contato@ricoricardoimoveis.com.br',
+    email: 'diretoria@imobiliariamodelo.com.br',
     perfil: 'diretor',
     senha: 'admin',
-    especialidade: 'Direção Geral & Vendas',
+    especialidade: 'Direção Geral & Showroom',
     leadsAtendidos: 18,
     ativo: true,
     foto: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&q=80'
@@ -689,10 +690,10 @@ const CORRETORES_INICIAIS = [
     creci: '215.890-F',
     whatsapp: '5511970558412',
     telefone: '5511970558412',
-    email: 'carlos@ricoricardoimoveis.com.br',
+    email: 'carlos@imobiliariamodelo.com.br',
     perfil: 'corretor',
     senha: '123456',
-    especialidade: 'Casas, Sobrados & Apartamentos em Santo André',
+    especialidade: 'Casas, Sobrados & Apartamentos',
     leadsAtendidos: 14,
     ativo: true,
     foto: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80'
@@ -703,7 +704,7 @@ const CORRETORES_INICIAIS = [
     creci: '189.442-F',
     whatsapp: '5511988443322',
     telefone: '5511988443322',
-    email: 'mariana@ricoricardoimoveis.com.br',
+    email: 'mariana@imobiliariamodelo.com.br',
     perfil: 'gerente',
     senha: '123456',
     especialidade: 'Supervisão de Vendas & Locações',
@@ -917,7 +918,7 @@ const CONFIG_SOFIA_PADRAO = {
   nome: 'Sofia IA',
   cargo: 'Consultora Imobiliária Virtual 24h',
   tomVoz: 'Sofisticado, acolhedor e focado em qualificação rápida',
-  mensagemBoasVindas: 'Olá! Sou a Sofia, consultora inteligente da Rico Ricardo Imóveis. Conte comigo para encontrar a cobertura, apartamento ou casa dos seus sonhos em Santo André e região. O que você procura hoje: Comprar ou Alugar?',
+  mensagemBoasVindas: 'Olá! Sou a Sofia, consultora inteligente da Imobiliária Modelo. Conte comigo para encontrar a cobertura, apartamento ou casa dos seus sonhos. O que você procura hoje: Comprar ou Alugar?',
   whatsappDestino: '5511914879393'
 };
 
@@ -930,7 +931,7 @@ const AUDIT_LOG_INICIAIS = [
     acao: 'Login de Sessão',
     detalhe: 'Sessão administrativa iniciada com sucesso via navegador seguro.',
     autor: 'Diretoria Master',
-    ip: '189.120.45.10 (Santo André - SP)',
+    ip: '189.120.45.10 (São Paulo - SP)',
     status: 'Sucesso'
   },
   {
@@ -950,7 +951,7 @@ const AUDIT_LOG_INICIAIS = [
     acao: 'Sincronização de Portais',
     detalhe: 'Catálogo de 8 imóveis verificado e sincronizado com ZAP, VivaReal e OLX.',
     autor: 'Diretoria Master',
-    ip: '189.120.45.10 (Santo André - SP)',
+    ip: '189.120.45.10 (São Paulo - SP)',
     status: 'Concluído'
   },
   {
@@ -960,7 +961,7 @@ const AUDIT_LOG_INICIAIS = [
     acao: 'Auditoria de Termos',
     detalhe: 'Política de privacidade e consentimento de leads atualizada conforme Lei 13.709/2018.',
     autor: 'DPO / Compliance',
-    ip: '189.120.45.10 (Santo André - SP)',
+    ip: '189.120.45.10 (São Paulo - SP)',
     status: 'Conforme'
   }
 ];
@@ -980,6 +981,7 @@ const LEADS_INICIAIS = [
     tipoInteresse: 'Visita Presencial',
     origem: 'Instagram Ads',
     etapa: 'visita', // novo | contato | visita | proposta | fechado
+    status: 'Visita Agendada',
     temperatura: 'quente',
     valorNegocio: 3850000,
     corretor: 'Eduardo Martins',
@@ -997,6 +999,7 @@ const LEADS_INICIAIS = [
     tipoInteresse: 'Simulação de Financiamento',
     origem: 'ZAP Imóveis',
     etapa: 'contato',
+    status: 'Em Atendimento',
     temperatura: 'quente',
     valorNegocio: 1280000,
     corretor: 'Mariana Silveira',
@@ -1014,6 +1017,7 @@ const LEADS_INICIAIS = [
     tipoInteresse: 'Book Digital / Lançamento',
     origem: 'Facebook Ads',
     etapa: 'novo',
+    status: 'Novo Lead',
     temperatura: 'morno',
     valorNegocio: 690000,
     corretor: 'Eduardo Martins',
@@ -1031,6 +1035,7 @@ const LEADS_INICIAIS = [
     tipoInteresse: 'Proposta Comercial Formalizada',
     origem: 'VivaReal',
     etapa: 'proposta',
+    status: 'Em Proposta',
     temperatura: 'quente',
     valorNegocio: 5200000,
     corretor: 'Eduardo Martins',
@@ -1048,6 +1053,7 @@ const LEADS_INICIAIS = [
     tipoInteresse: 'Contrato Assinado / Chaves Entregues',
     origem: 'Site Direto',
     etapa: 'fechado',
+    status: 'Fechado',
     temperatura: 'quente',
     valorNegocio: 2150000,
     corretor: 'Mariana Silveira',
@@ -1065,6 +1071,7 @@ const LEADS_INICIAIS = [
     tipoInteresse: 'Locação para Clínica de Especialidades',
     origem: 'OLX Imóveis',
     etapa: 'contato',
+    status: 'Em Atendimento',
     temperatura: 'morno',
     valorNegocio: 174000,
     corretor: 'Carlos Prado',
@@ -2076,11 +2083,11 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       };
     }
 
-    // 3. Acesso Rápido de Demonstração / Genérico (demo123 ou admin123 com e-mail demo)
-    if (senhaLimpa === 'demo123' || (senhaLimpa === 'admin123' && (emailLimpo.includes('demo') || emailLimpo.includes('rico')))) {
+    // 3. Acesso Rápido de Demonstração / Genérico (demo123 ou admin123 com e-mail demo/modelo)
+    if (senhaLimpa === 'demo123' || (senhaLimpa === 'admin123' && (emailLimpo.includes('demo') || emailLimpo.includes('modelo') || emailLimpo.includes('diretor')))) {
       const uDemo = {
-        nome: 'Diretor (Degustação 4 Dias)',
-        email: emailLimpo || 'demo@nexocrm.com.br',
+        nome: 'Diretor Modelo (Degustação 4 Dias)',
+        email: emailLimpo || 'diretoria@imobiliariamodelo.com.br',
         perfil: 'diretor'
       };
       this.salvarUsuarioAtivo(uDemo);
@@ -2121,8 +2128,8 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
 
     if (senhaLimpa === senhaSalva) {
       const uLogado = {
-        nome: uPrincipal.nome || 'Diretor Responsável',
-        email: emailLimpo || uPrincipal.email || 'admin@nexocrm.com.br',
+        nome: uPrincipal.nome || 'Diretor Modelo',
+        email: emailLimpo || uPrincipal.email || 'diretoria@imobiliariamodelo.com.br',
         perfil: 'diretor'
       };
       this.salvarUsuarioAtivo(uLogado);
@@ -2151,9 +2158,9 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
     } catch (e) {}
     const cfg = this.getConfig();
     return {
-      nome: 'Diretor Responsável',
-      empresa: cfg.nomeFantasia || 'Imobiliária Parceira',
-      email: cfg.email || 'admin@nexocrm.com.br',
+      nome: 'Diretor Roberto Albuquerque',
+      empresa: cfg.nomeFantasia || 'Imobiliária Modelo Showroom',
+      email: cfg.email || 'diretoria@imobiliariamodelo.com.br',
       whatsapp: cfg.whatsapp || '11914879393',
       perfil: 'diretor'
     };

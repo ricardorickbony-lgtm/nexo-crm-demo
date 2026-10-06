@@ -37,8 +37,8 @@ function initImobiliaria() {
 
   // Sincronização em tempo real entre abas do navegador
   window.addEventListener('storage', (e) => {
-    const imoveisKey = (typeof STORAGE_IMOVEIS_KEY !== 'undefined') ? STORAGE_IMOVEIS_KEY : 'ricoricardo_estoque_v1';
-    const configKey = (typeof STORAGE_CONFIG_KEY !== 'undefined') ? STORAGE_CONFIG_KEY : 'ricoricardo_config_v1';
+    const imoveisKey = (typeof STORAGE_IMOVEIS_KEY !== 'undefined') ? STORAGE_IMOVEIS_KEY : 'nexodemo_estoque_v1';
+    const configKey = (typeof STORAGE_CONFIG_KEY !== 'undefined') ? STORAGE_CONFIG_KEY : 'nexodemo_config_v1';
     if (e.key === imoveisKey || e.key === 'imob_prime_estoque_v1') {
       povoarFiltroBairros();
       aplicarFiltrosEstatisticas();
@@ -117,7 +117,8 @@ function configurarHorarioWhatsApp() {
   let statusTitulo = 'Estamos Online';
   let statusSub = 'Atendimento Imediato';
   let tooltipStatus = '🟢 Aberto Agora • Google';
-  let msgWa = 'Olá! Estou no site da Rico Ricardo Imóveis e gostaria de falar com um corretor agora.';
+  const nomeImobMsg = config.nome || 'Imobiliária Modelo';
+  let msgWa = `Olá! Estou no site da ${nomeImobMsg} e gostaria de falar com um corretor agora.`;
 
   if (diaSemana >= 1 && diaSemana <= 5) {
     // Segunda a Sexta
@@ -126,7 +127,7 @@ function configurarHorarioWhatsApp() {
       statusTitulo = 'Estamos Online';
       statusSub = 'Atendimento Imediato';
       tooltipStatus = '🟢 Aberto Agora (Seg-Sex 08:30 - 18:30)';
-      msgWa = 'Olá! Estou no site da Rico Ricardo Imóveis e gostaria de atendimento imediato.';
+      msgWa = `Olá! Estou no site da ${nomeImobMsg} e gostaria de atendimento imediato.`;
     } else {
       estaOnline = false;
       statusTitulo = 'Fora do Horário';
@@ -141,7 +142,7 @@ function configurarHorarioWhatsApp() {
       statusTitulo = 'Estamos Online';
       statusSub = 'Plantão de Sábado';
       tooltipStatus = '🟢 Aberto Agora (Sáb 09:00 - 14:00)';
-      msgWa = 'Olá! Estou no site da Rico Ricardo Imóveis e gostaria de falar com um corretor de plantão neste sábado.';
+      msgWa = `Olá! Estou no site da ${nomeImobMsg} e gostaria de falar com um corretor de plantão neste sábado.`;
     } else {
       estaOnline = false;
       statusTitulo = 'Fora do Horário';
@@ -1037,7 +1038,7 @@ function configurarModalPrivacidade() {
           <p class="text-xs text-slate-500">Última atualização: Outubro de 2026</p>
         </div>
         <div class="text-xs text-slate-600 space-y-3 max-h-[60vh] overflow-y-auto pr-2 leading-relaxed">
-          <p>Esta Política de Privacidade descreve como a <strong>Rico Ricardo Imóveis</strong> coleta, utiliza, armazena e protege os dados pessoais dos usuários de acordo com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD).</p>
+          <p>Esta Política de Privacidade descreve como a <strong>${DB.getConfig().nome || 'Imobiliária Modelo'}</strong> coleta, utiliza, armazena e protege os dados pessoais dos usuários de acordo com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD).</p>
           <h4 class="font-bold text-slate-800 text-sm">1. Coleta e Finalidade dos Dados</h4>
           <p>Coletamos dados fornecidos voluntariamente por você ao enviar mensagens, propostas, simulações de financiamento ou agendamentos de visita pelo site ou WhatsApp oficial (como Nome completo, WhatsApp/Telefone e perfil do imóvel de interesse). Esses dados são utilizados exclusivamente para o atendimento imobiliário solicitado.</p>
           <h4 class="font-bold text-slate-800 text-sm">2. Cookies e Tecnologias de Remarketing</h4>
@@ -1164,7 +1165,7 @@ function configurarWidgetSofiaIA() {
       </form>
 
       <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between">
-        <span>Rico Ricardo Imóveis • Sofia IA</span>
+        <span>${escapeHtml(DB.getConfig().nome || 'Imobiliária Modelo')} • Sofia IA</span>
         <a href="https://wa.me/${sofiaConfig.whatsappDestino || '5511914879393'}" target="_blank" class="text-indigo-600 hover:underline font-bold">Atendimento Humano WhatsApp</a>
       </div>
     `;

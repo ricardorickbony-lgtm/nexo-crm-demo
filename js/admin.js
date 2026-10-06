@@ -144,7 +144,7 @@ function verificarAcoesUrlShortcut() {
 /**
  * 1. Autenticação, Defesa Anti-Força Bruta e Sessão Segura
  */
-const STORAGE_BRUTE_FORCE_KEY = 'ricoricardo_brute_force_lock_v1';
+const STORAGE_BRUTE_FORCE_KEY = 'nexodemo_brute_force_lock_v1';
 const MAX_FALHAS_LOGIN = 5;
 const TEMPO_BLOQUEIO_MS = 15 * 60 * 1000; // 15 minutos de bloqueio temporário
 let intervalContadorBloqueio = null;
@@ -351,13 +351,28 @@ function atualizarHeaderUsuarioLogado() {
   const siglaEl = document.getElementById('header-avatar-sigla');
   const rbacContainer = document.getElementById('container-seletor-rbac');
 
+  // Atualização dinâmica do nome e CRECI da Imobiliária no topo
+  try {
+    const cfg = DB.getConfig ? DB.getConfig() : null;
+    const headerImobNome = document.getElementById('header-imobiliaria-nome');
+    const headerImobCreci = document.getElementById('header-imobiliaria-creci');
+    if (cfg) {
+      if (headerImobNome) {
+        headerImobNome.innerHTML = `${cfg.nome || 'IMOBILIÁRIA'} <span class="text-blue-600">MODELO</span>`;
+      }
+      if (headerImobCreci) {
+        headerImobCreci.textContent = `Showroom • ${cfg.creci || 'CRECI 00000-J'}`;
+      }
+    }
+  } catch (e) {}
+
   if (usuario) {
-    if (nomeEl) nomeEl.textContent = usuario.nome || 'Administrador';
+    if (nomeEl) nomeEl.textContent = usuario.nome || 'Diretor Modelo';
     const cargoFormatado = usuario.perfil === 'diretor' ? '👑 Diretor' : (usuario.perfil === 'gerente' ? '👔 Gerente' : '💼 Corretor');
     if (cargoEl) cargoEl.textContent = cargoFormatado;
     if (siglaEl) {
-      const parts = (usuario.nome || 'Admin').trim().split(/\s+/);
-      const s = (parts[0]?.[0] || 'A') + (parts.length > 1 ? (parts[parts.length - 1]?.[0] || '') : (parts[0]?.[1] || ''));
+      const parts = (usuario.nome || 'Diretor Modelo').trim().split(/\s+/);
+      const s = (parts[0]?.[0] || 'D') + (parts.length > 1 ? (parts[parts.length - 1]?.[0] || '') : (parts[0]?.[1] || 'M'));
       siglaEl.textContent = s.toUpperCase();
     }
     // Trava de governança: Corretores têm o seletor oculto para impedir auto-promoção
@@ -482,8 +497,8 @@ function configurarEventosLogin() {
     DB.registrarLogAuditoria('Logout de Sessão', 'Autenticação', 'Sessão administrativa encerrada pelo usuário.', DB.getPerfilAtivo());
     sessionStorage.removeItem('imob_admin_logado');
     localStorage.removeItem('imob_admin_logado');
-    sessionStorage.removeItem('ricoricardo_usuario_ativo_v1');
-    localStorage.removeItem('ricoricardo_usuario_ativo_v1');
+    sessionStorage.removeItem('nexodemo_usuario_ativo_v1');
+    localStorage.removeItem('nexodemo_usuario_ativo_v1');
     location.reload();
   });
 }
@@ -575,6 +590,15 @@ function carregarMetricasDashboard() {
           ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-700">🔥 Quente</span>'
           : (l.temperatura === 'morno' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700">⚡ Morno</span>' : '<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">❄️ Frio</span>');
 
+        const etapaNomeMap = {
+          'novo': 'Novo Lead',
+          'contato': 'Em Atendimento',
+          'visita': 'Visita Agendada',
+          'proposta': 'Em Proposta',
+          'fechado': 'Fechado'
+        };
+        const statusTexto = l.status || etapaNomeMap[l.etapa] || (l.etapa ? (l.etapa.charAt(0).toUpperCase() + l.etapa.slice(1)) : 'Em Atendimento');
+
         return `
           <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200/80">
             <div>
@@ -582,7 +606,7 @@ function carregarMetricasDashboard() {
                 <span class="font-bold text-slate-900 text-sm">${l.nome}</span>
                 ${scoreBadge}
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
-                  ${l.status}
+                  ${statusTexto}
                 </span>
               </div>
               <p class="text-xs text-slate-500 mt-0.5">${l.imovelTitulo} (${l.tipoInteresse})</p>
@@ -3221,7 +3245,7 @@ function exportarAuditLogCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `auditoria_crm_ricoricardo_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `auditoria_crm_imobiliariamodelo_${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
 
   DB.registrarLogAuditoria(
@@ -3704,9 +3728,9 @@ function verTermoVisitaDetalhe(id) {
     container.innerHTML = `
       <div class="border-b-2 border-slate-900 pb-4 flex items-center justify-between">
         <div>
-          <h2 class="text-xl font-black text-slate-900 tracking-tight uppercase">${config.nome || 'RICO RICARDO IMÓVEIS'}</h2>
-          <p class="text-xs text-slate-600 font-semibold">${config.creci || 'CRECI 038613-J'} • ${config.endereco || 'Santo André - SP'}</p>
-          <p class="text-xs text-slate-500">Telefone: ${config.telefone || '(11) 4474-5966'} • WhatsApp: ${config.whatsapp || '5511914879393'}</p>
+          <h2 class="text-xl font-black text-slate-900 tracking-tight uppercase">${config.nome || 'IMOBILIÁRIA MODELO'}</h2>
+          <p class="text-xs text-slate-600 font-semibold">${config.creci || 'CRECI 00000-J'} • ${config.endereco || 'São Paulo - SP'}</p>
+          <p class="text-xs text-slate-500">Telefone: ${config.telefone || '(11) 4004-0000'} • WhatsApp: ${config.whatsapp || '5511914879393'}</p>
         </div>
         <div class="text-right">
           <span class="inline-block bg-slate-900 text-white font-mono font-bold text-xs px-3 py-1 rounded-lg">
@@ -3776,7 +3800,7 @@ function verTermoVisitaDetalhe(id) {
         </div>
 
         <div class="text-center pt-2 text-[10px] text-slate-400 font-mono border-t border-slate-100">
-          Autenticação Digital: SHA256-${btoa(termo.codigo + termo.dataHora).substring(0, 24)} • ${config.nome || 'Rico Ricardo Imóveis'}
+          Autenticação Digital: SHA256-${btoa(termo.codigo + termo.dataHora).substring(0, 24)} • ${config.nome || 'Imobiliária Modelo'}
         </div>
       </div>
     `;
