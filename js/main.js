@@ -927,6 +927,13 @@ function configurarFormularioProprietario() {
 window.abrirModalImovel = abrirModalImovel;
 window.trocarFotoDestaqueModal = trocarFotoDestaqueModal;
 window.limparFiltros = limparFiltros;
+window.toggleMenuMobile = function () {
+  const drawer = document.getElementById('menu-mobile-drawer');
+  if (drawer) {
+    drawer.classList.toggle('hidden');
+    drawer.classList.toggle('flex');
+  }
+};
 
 /**
  * 11. Banner de Cookies LGPD & Remarketing (Meta Pixel / Google Ads)
