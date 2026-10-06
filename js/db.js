@@ -126,19 +126,20 @@ const PLANOS_NEXO = {
   }
 };
 
-// Licença do Tenant Ativo (Padrão Oficial)
+// Licença da Instância de Demonstração (Degustação de 4 Dias de Prospecção)
 const LICENCA_PADRAO = {
   planoId: 'pro',
-  status: 'active', // 'trial' | 'active' | 'grace_period' | 'blocked'
+  status: 'trial', // Demonstração inicia em modo Degustação Trial (4 Dias)
   dataInicio: new Date().toISOString(),
-  dataVencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  dataVencimento: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
   diasTesteTotal: 4,
   valorMensal: 250.00,
   taxaAdesaoSetup: 600.00,
-  adesaoPaga: true,
+  adesaoPaga: false,
   chavePixCobranca: 'ricardo.nexo@pix.com.br',
   titularPix: 'Ricardo — NEXO CRM',
-  cidadePix: 'Santo André - SP'
+  cidadePix: 'Santo André - SP',
+  isDemoEnvironment: true
 };
 
 // Carteira de Clientes do Painel Master da NEXO (Super Admin de Ricardo & Severino)
@@ -2057,10 +2058,37 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       };
       this.salvarUsuarioAtivo(uMaster);
       this.salvarPerfilAtivo('diretor');
+
+      // Se a demonstração estiver bloqueada, a chave mestra reinicia o trial por mais 4 dias
+      const lic = this.getLicenca();
+      if (lic.status === 'blocked') {
+        this.reiniciarTrialDemonstracao(4);
+      }
       return { valido: true, usuario: uMaster };
     }
 
-    // 2. Verifica se é um membro da equipe (Corretor, Gerente ou Diretor na Roleta)
+    // 2. Trava de Licença Expirada (se a degustação de 4 dias já acabou)
+    const statusLicenca = this.verificarStatusLicenca();
+    if (statusLicenca.isBloqueado) {
+      return { 
+        valido: false, 
+        motivo: '🔒 O período de degustação gratuita de 4 dias expirou. Para ativar a licença oficial da sua imobiliária, entre em contato com o Ricardo via WhatsApp.' 
+      };
+    }
+
+    // 3. Acesso Rápido de Demonstração / Genérico (demo123 ou admin123 com e-mail demo)
+    if (senhaLimpa === 'demo123' || (senhaLimpa === 'admin123' && (emailLimpo.includes('demo') || emailLimpo.includes('rico')))) {
+      const uDemo = {
+        nome: 'Diretor (Degustação 4 Dias)',
+        email: emailLimpo || 'demo@nexocrm.com.br',
+        perfil: 'diretor'
+      };
+      this.salvarUsuarioAtivo(uDemo);
+      this.salvarPerfilAtivo('diretor');
+      return { valido: true, usuario: uDemo };
+    }
+
+    // 4. Verifica se é um membro da equipe (Corretor, Gerente ou Diretor na Roleta)
     const corretores = this.getCorretores();
     const corretorAchado = corretores.find(c => 
       (c.email && c.email.toLowerCase() === emailLimpo) || 
@@ -2087,7 +2115,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       }
     }
 
-    // 3. Senha do Administrador / Diretor Principal
+    // 5. Senha do Administrador / Diretor Principal
     const senhaSalva = (localStorage.getItem(STORAGE_SENHA_KEY) || '').trim() || 'admin123';
     const uPrincipal = this.getUsuarioPrincipal();
 
@@ -2102,7 +2130,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       return { valido: true, usuario: uLogado };
     }
 
-    return { valido: false, motivo: 'E-mail ou senha incorretos. Verifique suas credenciais ou clique em "Primeiro Acesso".' };
+    return { valido: false, motivo: 'E-mail ou senha incorretos. Verifique suas credenciais ou clique em "Entrar na Demonstração".' };
   },
 
   alterarSenhaAdmin(novaSenha) {
@@ -2719,6 +2747,15 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       const data = localStorage.getItem(STORAGE_LICENCA_KEY);
       if (data) {
         const parsed = JSON.parse(data);
+        // Garante que o ambiente de demonstração inicie sempre com a regra de degustação de 4 dias
+        if (!parsed.isDemoEnvironment) {
+          parsed.isDemoEnvironment = true;
+          parsed.status = 'trial';
+          parsed.diasTesteTotal = 4;
+          parsed.dataInicio = new Date().toISOString();
+          parsed.dataVencimento = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString();
+          this.salvarLicenca(parsed);
+        }
         return { ...LICENCA_PADRAO, ...parsed };
       }
     } catch (e) {}
@@ -2733,11 +2770,31 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
     } catch (e) {}
   },
 
+  reiniciarTrialDemonstracao(dias = 4) {
+    const lic = this.getLicenca();
+    lic.status = 'trial';
+    lic.diasTesteTotal = dias;
+    lic.bloqueioManual = false;
+    lic.desbloqueioManual = false;
+    lic.dataInicio = new Date().toISOString();
+    lic.dataVencimento = new Date(Date.now() + dias * 24 * 60 * 60 * 1000).toISOString();
+    this.salvarLicenca(lic);
+    this.registrarLogAuditoria(
+      'Reset de Demonstração (4 Dias)',
+      'Licença & SaaS',
+      `Degustação de demonstração reiniciada por mais ${dias} dias pelo Super Admin Ricardo.`,
+      'Super Admin'
+    );
+    return lic;
+  },
+
   verificarStatusLicenca() {
     const lic = this.getLicenca();
     const agora = new Date().getTime();
     const vencimento = new Date(lic.dataVencimento).getTime();
-    const diffDias = Math.ceil((vencimento - agora) / (1000 * 60 * 60 * 24));
+    const diffMs = vencimento - agora;
+    const diffDias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    const diffHoras = Math.ceil(diffMs / (1000 * 60 * 60));
 
     let statusCalculado = lic.status;
 
@@ -2746,7 +2803,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
     } else if (lic.desbloqueioManual) {
       statusCalculado = 'active';
     } else if (lic.status === 'trial') {
-      if (diffDias < 0) {
+      if (diffMs <= 0) {
         statusCalculado = 'blocked';
       }
     } else if (lic.status === 'active' || lic.status === 'grace_period') {
@@ -2768,6 +2825,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       licenca: lic,
       plano: PLANOS_NEXO[lic.planoId] || PLANOS_NEXO.pro,
       diasRestantes: diffDias,
+      horasRestantes: Math.max(0, diffHoras),
       isTrial: lic.status === 'trial',
       isBloqueado: lic.status === 'blocked',
       isCarencia: lic.status === 'grace_period',

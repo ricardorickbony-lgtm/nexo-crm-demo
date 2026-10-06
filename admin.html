@@ -57,14 +57,37 @@
         <p class="text-xs text-slate-500 mt-1">Plataforma Inteligente de Gestão Imobiliária, Portais & Leads</p>
       </div>
 
-      <div id="login-info-box" class="bg-blue-50 border border-blue-200 rounded-2xl p-3 text-left text-xs text-blue-900 space-y-1">
-        <span class="font-bold flex items-center gap-1.5 text-blue-700">
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-          Autenticação Segura &amp; Primeiro Acesso
-        </span>
+      <!-- Card Informativo de Degustação Comercial (4 Dias Grátis) -->
+      <div id="login-info-box" class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-3.5 text-left text-xs text-blue-950 space-y-1.5 shadow-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold flex items-center gap-1.5 text-blue-700">
+            <span>⏱️</span>
+            <span>Degustação Comercial (4 Dias Grátis)</span>
+          </span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+            Showroom Pro
+          </span>
+        </div>
         <p class="text-[11px] text-blue-800 leading-relaxed" id="login-instrucao-texto">
-          Digite seu <strong>e-mail corporativo</strong> e <strong>senha</strong>. Se você é um cliente novo, clique no botão <strong>Primeiro Acesso</strong> abaixo para criar sua senha.
+          Ambiente liberado para prospecção com <strong>Sofia IA</strong>, <strong>Roleta de Leads</strong> e <strong>Simulador Caixa</strong>. Válido por <strong>4 dias</strong> a partir do primeiro acesso.
         </p>
+      </div>
+
+      <!-- Botão de Acesso Rápido de 1 Clique para Demonstração -->
+      <button 
+        type="button" 
+        onclick="entrarAcessoRapidoDemo()" 
+        class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs py-3 px-4 rounded-xl transition shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2 group"
+      >
+        <span>🚀</span>
+        <span>Entrar na Demonstração (1 Clique)</span>
+        <span class="group-hover:translate-x-1 transition-transform">→</span>
+      </button>
+
+      <div class="flex items-center gap-2 my-1 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+        <div class="h-px bg-slate-200 flex-1"></div>
+        <span>ou acesse com login e senha</span>
+        <div class="h-px bg-slate-200 flex-1"></div>
       </div>
 
       <form id="form-login-admin" class="space-y-3.5 text-left">
@@ -74,9 +97,9 @@
             <input 
               type="email" 
               id="input-email-admin" 
-              placeholder="seu-email@imobiliaria.com.br" 
+              placeholder="demo@nexocrm.com.br ou seu e-mail" 
               required 
-              value="admin@nexocrm.com.br"
+              value="demo@nexocrm.com.br"
               class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white text-slate-900 font-medium"
             >
             <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">✉️</span>
@@ -94,8 +117,9 @@
             <input 
               type="password" 
               id="input-senha-admin" 
-              placeholder="Digite sua senha..." 
+              placeholder="Senha demo: admin123" 
               required 
+              value="admin123"
               class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-4 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white font-medium text-slate-900"
             >
             <button 
@@ -115,7 +139,7 @@
             <input type="checkbox" id="check-lembrar-acesso" checked class="w-3.5 h-3.5 text-blue-600 rounded">
             <span>Lembrar meu acesso</span>
           </label>
-          <span class="text-[10px] text-slate-400 font-mono">Padrão demo: admin123</span>
+          <span class="text-[10px] text-slate-400 font-mono">Padrão: admin123</span>
         </div>
 
         <div id="login-erro" class="hidden text-xs font-bold text-rose-600 bg-rose-50 p-2.5 rounded-xl border border-rose-200 text-center space-y-0.5">
@@ -3425,51 +3449,57 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- TELA DE BLOQUEIO DE SINAL DE ACESSO (QUANDO LICENÇA ESTÁ CORTADA)         -->
+  <!-- TELA DE BLOQUEIO DE SINAL DE ACESSO (QUANDO A DEGUSTAÇÃO DE 4 DIAS EXPIRA) -->
   <!-- ========================================================================= -->
   <div id="tela-bloqueio-sinal" class="hidden fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl border border-rose-200">
       <div>
-        <div class="w-16 h-16 rounded-3xl bg-rose-50 text-rose-600 inline-flex items-center justify-center text-3xl font-black mb-3 shadow-sm border border-rose-100">
-          🔒
+        <div class="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 inline-flex items-center justify-center text-3xl font-black mb-3 shadow-sm border border-amber-200">
+          ⏱️
         </div>
-        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Sinal Temporariamente Suspenso</h3>
-        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
-          O período de carência da licença do seu CRM expirou. Para reestabelecer o acesso imediato de toda a equipe e corretores, realize a quitação da mensalidade.
+        <h3 class="text-2xl font-black text-slate-900 tracking-tight">Degustação de 4 Dias Concluída!</h3>
+        <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+          O período de demonstração gratuita de <strong>4 dias</strong> do NEXO CRM expirou. Gostou do desempenho da Sofia IA, da roleta de corretores e do simulador?
         </p>
       </div>
 
-      <!-- Resumo da Pendência -->
-      <div class="bg-rose-50 rounded-2xl p-4 border border-rose-200 text-left space-y-1.5 text-xs text-rose-950">
-        <div class="flex items-center justify-between">
-          <span class="font-semibold text-rose-700">Chave PIX:</span>
-          <span class="font-mono font-bold">ricardo.nexo@pix.com.br</span>
+      <!-- Proposta de Contratação & Ativação Definitiva -->
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 border border-blue-200 text-left space-y-2 text-xs text-blue-950">
+        <div class="font-bold text-blue-900 flex items-center gap-1.5 text-xs">
+          <span>🏢</span> <span>Ative o NEXO CRM Oficial da sua Imobiliária:</span>
         </div>
-        <div class="flex items-center justify-between">
-          <span class="font-semibold text-rose-700">Beneficiário:</span>
-          <span class="font-bold">Ricardo — NEXO CRM</span>
+        <ul class="text-[11px] text-blue-800 space-y-1 list-disc list-inside">
+          <li>Domínio próprio (www.suaimobiliaria.com.br)</li>
+          <li>Corretores ilimitados e carteiras blindadas</li>
+          <li>Sofia IA no WhatsApp oficial da sua equipe</li>
+          <li>Migração e portabilidade completa de imóveis</li>
+        </ul>
+        <div class="pt-2 border-t border-blue-200/80 flex items-center justify-between text-xs">
+          <span class="font-semibold text-slate-700">Adesão &amp; Setup:</span>
+          <span class="font-black text-blue-900">R$ 600,00</span>
         </div>
-        <div class="flex items-center justify-between pt-1 border-t border-rose-200">
-          <span class="font-semibold text-rose-700">Valor para Desbloqueio:</span>
-          <span class="font-black text-sm text-rose-900" id="tela-bloqueio-valor">R$ 150,00</span>
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-semibold text-slate-700">Mensalidade:</span>
+          <span class="font-black text-blue-900">A partir de R$ 150,00/mês</span>
         </div>
       </div>
 
-      <!-- Botões de Ação para Regularização -->
-      <div class="space-y-2 pt-2">
-        <button onclick="copiarPixBloqueio()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black text-xs py-3 rounded-xl transition flex items-center justify-center gap-2 shadow">
-          <span>📋</span> <span id="btn-copiar-pix-bloqueio-texto">Copiar Código PIX</span>
-        </button>
-        <a id="link-whatsapp-desbloqueio" href="https://wa.me/5511914879393?text=Ol%C3%A1%20Ricardo,%20fiz%20o%20pagamento%20do%20PIX%20do%20CRM%20e%20gostaria%20da%20libera%C3%A7%C3%A3o%20do%20sinal" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition flex items-center justify-center gap-2 shadow">
-          <span>📲</span> <span>Enviar Comprovante no WhatsApp</span>
+      <!-- Botões de Ação para Contratação -->
+      <div class="space-y-2 pt-1">
+        <a id="link-whatsapp-desbloqueio" href="https://wa.me/5511914879393?text=Ol%C3%A1%20Ricardo!%20Meu%20teste%20de%204%20dias%20do%20NEXO%20CRM%20expirou%20e%20gostaria%20de%20contratar%20a%20implanta%C3%A7%C3%A3o%20oficial%20para%20minha%20imobili%C3%A1ria." target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30">
+          <span>📲</span> <span>Contratar Licença Oficial via WhatsApp</span>
         </a>
+        <button onclick="copiarPixBloqueio()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow">
+          <span>📋</span> <span id="btn-copiar-pix-bloqueio-texto">Copiar Chave PIX (ricardo.nexo@pix.com.br)</span>
+        </button>
       </div>
 
-      <!-- Acesso de Emergência do Super Admin (Ricardo & Severino) -->
-      <div class="pt-3 border-t border-slate-100">
-        <button onclick="desbloquearSinalMasterEmergencia()" class="text-[11px] font-bold text-slate-400 hover:text-blue-600 transition underline">
-          👑 Liberação de Emergência Master (Super Admin)
+      <!-- Acesso de Emergência / Reset do Super Admin Ricardo -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+        <button onclick="desbloquearSinalMasterEmergencia()" class="font-bold text-slate-400 hover:text-blue-600 transition underline">
+          👑 Modo Apresentação (Ricardo Super Admin)
         </button>
+        <span class="text-slate-400 text-[10px]">v2.6 Demonstração</span>
       </div>
     </div>
   </div>

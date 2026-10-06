@@ -4250,10 +4250,20 @@ function atualizarBadgeLicencaHeader() {
   badgeDot.className = 'w-1.5 h-1.5 rounded-full';
 
   if (lic.status === 'trial') {
-    badgePill.classList.add('bg-blue-50', 'text-blue-800', 'border-blue-200');
-    badgeDot.classList.add('bg-blue-500', 'animate-pulse');
     const dias = Math.max(0, statusInfo.diasRestantes);
-    badgeTexto.textContent = `${plano.nome} • Degustação (${dias}d restantes)`;
+    if (dias > 1) {
+      badgePill.classList.add('bg-blue-50', 'text-blue-800', 'border-blue-200');
+      badgeDot.classList.add('bg-blue-500', 'animate-pulse');
+      badgeTexto.textContent = `⏱️ Degustação Pro • ${dias} Dias Restantes`;
+    } else if (dias === 1) {
+      badgePill.classList.add('bg-amber-50', 'text-amber-900', 'border-amber-300');
+      badgeDot.classList.add('bg-amber-500', 'animate-ping');
+      badgeTexto.textContent = `⚠️ Degustação • Último Dia!`;
+    } else {
+      badgePill.classList.add('bg-rose-50', 'text-rose-900', 'border-rose-300');
+      badgeDot.classList.add('bg-rose-500');
+      badgeTexto.textContent = `🔒 Degustação Expirada`;
+    }
   } else if (lic.status === 'active') {
     badgePill.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
     badgeDot.classList.add('bg-emerald-500');
@@ -4739,20 +4749,35 @@ function copiarPixBloqueio() {
 }
 
 function desbloquearSinalMasterEmergencia() {
-  const senha = prompt('👑 Acesso Master: Digite a senha administrativa de Ricardo & Severino para liberação de emergência:');
-  if (senha === 'admin123' || senha === 'ricardo2026') {
-    const lic = DB.getLicenca();
-    lic.status = 'active';
-    lic.bloqueioManual = false;
-    lic.desbloqueioManual = true;
-    lic.dataVencimento = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    DB.salvarLicenca(lic);
+  const senha = prompt('👑 Acesso Master Ricardo & Severino:\nDigite sua Chave Mestra para renovar a demonstração comercial:');
+  if (senha === 'ricardo2026' || senha === 'admin123') {
+    if (DB.reiniciarTrialDemonstracao) {
+      DB.reiniciarTrialDemonstracao(4);
+    } else {
+      const lic = DB.getLicenca();
+      lic.status = 'trial';
+      lic.dataVencimento = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString();
+      DB.salvarLicenca(lic);
+    }
 
     document.getElementById('tela-bloqueio-sinal')?.classList.add('hidden');
     atualizarBadgeLicencaHeader();
-    mostrarToastFeedback('Sinal desbloqueado com sucesso pelo Super Admin!', '👑');
+    mostrarToastFeedback('🎉 Modo Demonstração reiniciado com sucesso! +4 Dias liberados.', '🚀');
   } else if (senha !== null) {
     alert('Senha master incorreta.');
+  }
+}
+
+function entrarAcessoRapidoDemo() {
+  const inputEmail = document.getElementById('input-email-admin');
+  const inputSenha = document.getElementById('input-senha-admin');
+  const formLogin = document.getElementById('form-login-admin');
+
+  if (inputEmail) inputEmail.value = 'demo@nexocrm.com.br';
+  if (inputSenha) inputSenha.value = 'admin123';
+
+  if (formLogin) {
+    formLogin.dispatchEvent(new Event('submit', { cancelable: true }));
   }
 }
 
@@ -5023,3 +5048,4 @@ window.salvarPrimeiroAcessoSubmit = salvarPrimeiroAcessoSubmit;
 window.abrirModalEsqueciSenha = abrirModalEsqueciSenha;
 window.fecharModalEsqueciSenha = fecharModalEsqueciSenha;
 window.redefinirSenhaSubmit = redefinirSenhaSubmit;
+window.entrarAcessoRapidoDemo = entrarAcessoRapidoDemo;
