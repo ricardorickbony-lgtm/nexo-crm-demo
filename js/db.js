@@ -213,7 +213,7 @@ const CONFIG_IMOB_PADRAO = {
   slogan: 'Plataforma Inteligente de Demonstração — O padrão dos melhores portais imobiliários',
   creci: 'CRECI 00000-J',
   telefone: '(11) 4004-0000',
-  whatsapp: '5511914879393', // WhatsApp comercial do Ricardo para atendimento de leads da demo
+  whatsapp: '5511970558412', // WhatsApp comercial oficial da NEXO Tecnologia (Demo Showroom)
   email: 'contato@imobiliariamodelo.com.br',
   endereco: 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
   cidade: 'São Paulo - SP',
@@ -1017,7 +1017,7 @@ const CONFIG_SOFIA_PADRAO = {
   cargo: 'Consultora Imobiliária Virtual 24h',
   tomVoz: 'Sofisticado, acolhedor e focado em qualificação rápida',
   mensagemBoasVindas: 'Olá! Sou a Sofia, consultora inteligente da Imobiliária Modelo. Conte comigo para encontrar a cobertura, apartamento ou casa dos seus sonhos. O que você procura hoje: Comprar ou Alugar?',
-  whatsappDestino: '5511914879393'
+  whatsappDestino: '5511970558412'
 };
 
 // Trilha de Auditoria Inicial (Audit Log de Segurança & Governança)
@@ -1325,6 +1325,10 @@ const DB = {
       const data = localStorage.getItem(STORAGE_CONFIG_KEY);
       if (data) {
         const parsed = JSON.parse(data);
+        if (parsed.whatsapp === '5511914879393' || parsed.whatsapp === '11914879393') {
+          parsed.whatsapp = CONFIG_IMOB_PADRAO.whatsapp;
+          try { localStorage.setItem(STORAGE_CONFIG_KEY, JSON.stringify(parsed)); } catch(e) {}
+        }
         return { ...CONFIG_IMOB_PADRAO, ...parsed };
       }
     } catch (e) {}
@@ -2081,6 +2085,10 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       const data = localStorage.getItem(STORAGE_SOFIA_KEY);
       if (data) {
         const parsed = JSON.parse(data);
+        if (parsed.whatsappDestino === '5511914879393' || parsed.whatsappDestino === '11914879393') {
+          parsed.whatsappDestino = CONFIG_SOFIA_PADRAO.whatsappDestino;
+          this.salvarSofiaConfig(parsed);
+        }
         if (parsed.mensagemBoasVindas && parsed.mensagemBoasVindas.includes('Prime Im')) {
           parsed.mensagemBoasVindas = CONFIG_SOFIA_PADRAO.mensagemBoasVindas;
           parsed.whatsappDestino = CONFIG_SOFIA_PADRAO.whatsappDestino;
@@ -2219,12 +2227,35 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
     else if (texto.includes('planta') || texto.includes('lançamento')) tipoIdentificado = 'lancamento';
     else if (texto.includes('comercial') || texto.includes('laje') || texto.includes('sala')) tipoIdentificado = 'comercial';
 
-    // Identifica bairro
+    // Identifica bairro dinamicamente com suporte a sinônimos e radicais (ex: "Marajó" para "Parque Marajoara")
+    const normalizar = (s) => (s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, '')
+      .trim();
+
+    const textoNorm = normalizar(texto);
     let bairroIdentificado = '';
-    if (texto.includes('jardim')) bairroIdentificado = 'jardim';
-    else if (texto.includes('campestre')) bairroIdentificado = 'campestre';
-    else if (texto.includes('bastos')) bairroIdentificado = 'bastos';
-    else if (texto.includes('valparaiso')) bairroIdentificado = 'valparaíso';
+
+    const todosBairros = [...new Set(imoveis.map(im => im.bairro).filter(Boolean))];
+    for (const b of todosBairros) {
+      const bNorm = normalizar(b);
+      if (textoNorm.includes(bNorm)) {
+        bairroIdentificado = b;
+        break;
+      }
+      const tokens = bNorm.split(/\s+/).filter(w => w.length >= 4 && !['bairro', 'vila', 'parque', 'jardim', 'santo', 'andre'].includes(w));
+      const matchToken = tokens.some(tok => {
+        return textoNorm.includes(tok) || 
+               (tok.length >= 6 && textoNorm.includes(tok.slice(0, 5))) ||
+               (textoNorm.includes('marajo') && tok.includes('marajo'));
+      });
+      if (matchToken) {
+        bairroIdentificado = b;
+        break;
+      }
+    }
 
     // Filtra imóveis compatíveis
     let sugestoes = imoveis;
@@ -2237,8 +2268,16 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
     }
 
     if (bairroIdentificado) {
-      const filtradosPorBairro = sugestoes.filter(im => im.bairro.toLowerCase().includes(bairroIdentificado));
-      if (filtradosPorBairro.length > 0) sugestoes = filtradosPorBairro;
+      const filtradosPorBairro = sugestoes.filter(im => im.bairro.toLowerCase().includes(bairroIdentificado.toLowerCase()));
+      if (filtradosPorBairro.length > 0) {
+        sugestoes = filtradosPorBairro;
+      } else {
+        // Se pediu um tipo que não tem no bairro exato, prioriza imóveis do bairro
+        const doBairro = imoveis.filter(im => im.bairro.toLowerCase().includes(bairroIdentificado.toLowerCase()));
+        if (doBairro.length > 0) {
+          sugestoes = doBairro;
+        }
+      }
     }
 
     // Pega as melhores 2 ou 3 opções
@@ -2247,12 +2286,16 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
     let respostaTexto = '';
     if (recomendacoes.length > 0) {
       const nomes = recomendacoes.map(im => `• ${im.codigo} - ${im.titulo} (${im.bairro})`).join('\n');
-      respostaTexto = `Com certeza! Encontrei opções incríveis no nosso acervo que combinam com você:\n\n${nomes}\n\nVocê gostaria de ver as fotos, saber o que tem por perto na região ou já agendar uma visita com nosso corretor de plantão no WhatsApp?`;
+      if (bairroIdentificado && recomendacoes.some(im => im.bairro.toLowerCase().includes(bairroIdentificado.toLowerCase()))) {
+        respostaTexto = `Com certeza! Encontrei no nosso acervo oportunidades incríveis com excelente localização na região de ${bairroIdentificado}:\n\n${nomes}\n\nVocê gostaria de ver as fotos, saber o que tem por perto no bairro ou já agendar uma visita com nosso especialista?`;
+      } else {
+        respostaTexto = `Com certeza! Encontrei opções incríveis no nosso acervo que combinam com você:\n\n${nomes}\n\nVocê gostaria de ver as fotos, saber o que tem por perto na região ou já agendar uma visita com nosso corretor de plantão no WhatsApp?`;
+      }
     } else {
       respostaTexto = `Entendi perfeitamente sua busca! Temos novas oportunidades exclusivas entrando em carteira esta semana. Posso conectá-lo(a) agora mesmo com nosso especialista no WhatsApp para apresentar opções sob medida para você?`;
     }
 
-    const waLink = `https://wa.me/${config.whatsapp}?text=${encodeURIComponent(`Olá! Estive conversando com a Sofia IA no site sobre: "${mensagemUsuario}". Gostaria de receber mais detalhes e fotos dos imóveis sugeridos.`)}`;
+    const waLink = `https://wa.me/${config.whatsapp}?text=${encodeURIComponent(`Olá! Estive testando a demonstração do NEXO CRM sobre: "${mensagemUsuario}". Gostaria de saber mais sobre a plataforma e agendar uma apresentação.`)}`;
 
     return {
       respostaTexto,
