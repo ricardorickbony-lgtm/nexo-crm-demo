@@ -918,6 +918,8 @@ function configurarFormularioImovel() {
     }
     imovelEmEdicaoId = null;
     form.reset();
+    const inputPois = document.getElementById('input-imob-pois');
+    if (inputPois) inputPois.value = '';
     document.getElementById('modal-cadastro-titulo').textContent = 'Cadastrar Novo Imóvel';
     document.getElementById('input-imob-codigo').value = 'REF-' + Math.floor(1000 + Math.random() * 9000);
     modal.classList.add('active');
@@ -927,12 +929,9 @@ function configurarFormularioImovel() {
     modal.classList.remove('active');
   });
 
-  // Upload direto de fotos do computador/celular (com compressão inteligente anti-travamento)
-  const uploadInput = document.getElementById('input-upload-fotos-arquivo');
-  uploadInput?.addEventListener('change', async (e) => {
-    const files = Array.from(e.target.files);
+  // Função compartilhada de processamento de fotos (computador ou câmera móvel com compressão anti-travamento)
+  async function processarArquivosFotos(files) {
     if (!files || files.length === 0) return;
-
     const textareaFotos = document.getElementById('input-imob-fotos');
     const inputFotoPrincipal = document.getElementById('input-imob-foto-principal');
     const statusUpload = document.getElementById('status-upload-fotos');
@@ -960,7 +959,20 @@ function configurarFormularioImovel() {
       statusUpload.textContent = `✓ ${files.length} foto(s) otimizada(s) e anexada(s) com sucesso!`;
       setTimeout(() => statusUpload.classList.add('hidden'), 3500);
     }
+  }
+
+  // Upload direto de fotos do computador/celular
+  const uploadInput = document.getElementById('input-upload-fotos-arquivo');
+  uploadInput?.addEventListener('change', async (e) => {
+    await processarArquivosFotos(Array.from(e.target.files));
     uploadInput.value = '';
+  });
+
+  // Câmera Instantânea Móvel na Vistoria (Direto pelo celular PWA)
+  const cameraInput = document.getElementById('input-upload-fotos-camera');
+  cameraInput?.addEventListener('change', async (e) => {
+    await processarArquivosFotos(Array.from(e.target.files));
+    cameraInput.value = '';
   });
 
   document.getElementById('busca-admin-imoveis')?.addEventListener('input', renderizarTabelaImoveis);
@@ -981,6 +993,34 @@ function configurarFormularioImovel() {
 
     const diferenciaisTexto = document.getElementById('input-imob-diferenciais').value.trim();
     const diferenciaisArray = diferenciaisTexto ? diferenciaisTexto.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+    // Radar de Entorno & Conveniências (POIs)
+    const poisTexto = document.getElementById('input-imob-pois') ? document.getElementById('input-imob-pois').value.trim() : '';
+    let poisArray = [];
+    if (poisTexto) {
+      poisArray = poisTexto.split('\n').map(l => l.trim()).filter(Boolean).map(linha => {
+        const match = linha.match(/^([^\(]+?)(?:\s*\((.*?)\))?$/);
+        const nomeCompleto = match ? match[1].trim() : linha;
+        const detalhes = match && match[2] ? match[2].split('•').map(s => s.trim()) : ['Próximo', 'A poucos minutos'];
+        const primeiroChar = Array.from(nomeCompleto)[0] || '📍';
+        const temEmoji = /\p{Extended_Pictographic}/u.test(primeiroChar);
+        const icone = temEmoji ? primeiroChar : '📍';
+        const nome = temEmoji ? nomeCompleto.replace(primeiroChar, '').trim() : nomeCompleto;
+        return {
+          categoria: 'conveniencia',
+          icone: icone,
+          nome: nome || linha,
+          distancia: detalhes[0] || 'Próximo',
+          tempo: detalhes[1] || 'A pé'
+        };
+      });
+    } else {
+      poisArray = DB.gerarPontosDeInteressePadrao(
+        document.getElementById('input-imob-bairro').value.trim(),
+        document.getElementById('input-imob-cidade').value.trim(),
+        document.getElementById('input-imob-tipo').value
+      );
+    }
 
     const dadosImovel = {
       codigo: document.getElementById('input-imob-codigo').value.trim().toUpperCase(),
@@ -1006,6 +1046,7 @@ function configurarFormularioImovel() {
       fotos: fotosArray,
       tags: tagsArray,
       diferenciais: diferenciaisArray,
+      pontosDeInteresse: poisArray,
       descricao: document.getElementById('input-imob-descricao').value.trim()
     };
 
@@ -1071,6 +1112,13 @@ function editarImovel(id) {
   document.getElementById('input-imob-tags').value = (im.tags || []).join(', ');
   document.getElementById('input-imob-diferenciais').value = (im.diferenciais || []).join(', ');
   document.getElementById('input-imob-descricao').value = im.descricao || '';
+  const inputPois = document.getElementById('input-imob-pois');
+  if (inputPois) {
+    const pLista = im.pontosDeInteresse || [];
+    inputPois.value = pLista.length > 0
+      ? pLista.map(p => `${p.icone || '📍'} ${p.nome} (${p.distancia} • ${p.tempo})`).join('\n')
+      : '';
+  }
 
   modal.classList.add('active');
 }
@@ -1101,6 +1149,30 @@ function configurarBotoesIA() {
         btnGerarIA.textContent = '✨ Gerar Descrição com IA';
         btnGerarIA.disabled = false;
       }, 600);
+    });
+  }
+
+  const btnGerarPoisIA = document.getElementById('btn-gerar-pois-ia');
+  if (btnGerarPoisIA) {
+    btnGerarPoisIA.addEventListener('click', () => {
+      const bairro = document.getElementById('input-imob-bairro')?.value.trim() || 'Bairro Nobre';
+      const cidade = document.getElementById('input-imob-cidade')?.value.trim() || 'Santo André - SP';
+      const tipo = document.getElementById('input-imob-tipo')?.value || 'apartamento';
+
+      btnGerarPoisIA.textContent = '⏳ Analisando...';
+      btnGerarPoisIA.disabled = true;
+
+      setTimeout(() => {
+        const pois = DB.gerarPontosDeInteressePadrao(bairro, cidade, tipo);
+        const formatado = pois.map(p => `${p.icone || '📍'} ${p.nome} (${p.distancia} • ${p.tempo})`).join('\n');
+        const inputPois = document.getElementById('input-imob-pois');
+        if (inputPois) inputPois.value = formatado;
+        btnGerarPoisIA.textContent = '✓ Radar Gerado!';
+        setTimeout(() => {
+          btnGerarPoisIA.textContent = '📍 Radar IA de Bairro';
+          btnGerarPoisIA.disabled = false;
+        }, 1800);
+      }, 400);
     });
   }
 }
@@ -6041,6 +6113,84 @@ function compartilharLinkTinderCliente() {
   alert(`📲 Link da Sala de Decisão gerado com sucesso!\n\nEnvie este link para o cliente no WhatsApp:\n${link}\n\nO cliente abrirá no celular a interface interativa com fotos e swipe para decidir em família!`);
 }
 
+// =============================================================================
+// SIMULADOR INTERATIVO DE WHATSAPP 24H (SOFIA IA SHOWCASE)
+// =============================================================================
+function abrirModalSimuladorWhatsapp() {
+  const modal = document.getElementById('modal-simulador-whatsapp');
+  if (modal) {
+    modal.classList.add('active');
+    setTimeout(() => {
+      const box = document.getElementById('simulador-wa-mensagens');
+      if (box) box.scrollTop = box.scrollHeight;
+    }, 150);
+  }
+}
+
+function fecharModalSimuladorWhatsapp() {
+  document.getElementById('modal-simulador-whatsapp')?.classList.remove('active');
+}
+
+function enviarMensagemSimuladorWa(texto) {
+  const input = document.getElementById('input-wa-simulador');
+  const txt = (texto || (input ? input.value : '')).trim();
+  if (!txt) return;
+  if (input) input.value = '';
+
+  const box = document.getElementById('simulador-wa-mensagens');
+  if (!box) return;
+
+  const now = new Date();
+  const hora = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
+  // Balão do Lead (Usuário)
+  const divUser = document.createElement('div');
+  divUser.className = 'flex flex-col items-end';
+  divUser.innerHTML = `
+    <div class="bg-[#005c4b] text-slate-100 p-2.5 rounded-2xl rounded-tr-none max-w-[85%] leading-relaxed shadow-sm">
+      <p>${escapeHtml(txt)}</p>
+      <div class="text-[9px] text-emerald-200 text-right mt-1 font-mono flex items-center justify-end gap-1">
+        <span>${hora}</span>
+        <span class="text-cyan-300">✓✓</span>
+      </div>
+    </div>
+  `;
+  box.appendChild(divUser);
+  box.scrollTop = box.scrollHeight;
+
+  // Indicador de "Sofia digitando..."
+  const divTyping = document.createElement('div');
+  divTyping.id = 'wa-typing-indicator';
+  divTyping.className = 'flex flex-col items-start';
+  divTyping.innerHTML = `
+    <div class="bg-[#202c33] text-emerald-400 p-2 rounded-2xl rounded-tl-none text-[11px] font-mono flex items-center gap-1.5 shadow-sm">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.2s]"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce [animation-delay:0.4s]"></span>
+      <span class="text-slate-300 ml-1">Sofia digitando...</span>
+    </div>
+  `;
+  box.appendChild(divTyping);
+  box.scrollTop = box.scrollHeight;
+
+  setTimeout(() => {
+    document.getElementById('wa-typing-indicator')?.remove();
+    const resultado = DB.processarMensagemSofiaIA(txt);
+
+    const divBot = document.createElement('div');
+    divBot.className = 'flex flex-col items-start';
+
+    divBot.innerHTML = `
+      <div class="bg-[#202c33] text-slate-100 p-2.5 rounded-2xl rounded-tl-none max-w-[88%] leading-relaxed shadow-sm border-l-2 border-emerald-400">
+        <p class="whitespace-pre-line text-[11px] leading-relaxed">${escapeHtml(resultado.respostaTexto)}</p>
+        <div class="text-[9px] text-slate-400 text-right mt-1 font-mono">${hora}</div>
+      </div>
+    `;
+    box.appendChild(divBot);
+    box.scrollTop = box.scrollHeight;
+  }, 450);
+}
+
 // Inicializações no carregamento do painel
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
@@ -6062,4 +6212,7 @@ window.abrirModalTinderImobiliario = abrirModalTinderImobiliario;
 window.fecharModalTinderImobiliario = fecharModalTinderImobiliario;
 window.tinderSwipeAction = tinderSwipeAction;
 window.compartilharLinkTinderCliente = compartilharLinkTinderCliente;
+window.abrirModalSimuladorWhatsapp = abrirModalSimuladorWhatsapp;
+window.fecharModalSimuladorWhatsapp = fecharModalSimuladorWhatsapp;
+window.enviarMensagemSimuladorWa = enviarMensagemSimuladorWa;
 

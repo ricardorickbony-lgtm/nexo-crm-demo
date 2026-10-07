@@ -788,6 +788,36 @@ function abrirModalImovel(id) {
     `).join('');
   }
 
+  // Radar de Conveniências & Entorno do Bairro (POIs com Inteligência Geográfica)
+  const containerPontos = document.getElementById('modal-container-pontos-interesse');
+  const listaPontos = document.getElementById('modal-lista-pontos-interesse');
+  if (containerPontos && listaPontos) {
+    const pontos = (imovel.pontosDeInteresse && imovel.pontosDeInteresse.length > 0)
+      ? imovel.pontosDeInteresse
+      : (window.DB && typeof DB.gerarPontosDeInteressePadrao === 'function'
+          ? DB.gerarPontosDeInteressePadrao(imovel.bairro, imovel.cidade, imovel.tipo)
+          : []);
+
+    if (pontos.length > 0) {
+      containerPontos.classList.remove('hidden');
+      listaPontos.innerHTML = pontos.map(p => `
+        <div class="flex items-center gap-2.5 p-2 rounded-xl bg-white border border-slate-200/70 shadow-xs">
+          <span class="text-base shrink-0 p-1.5 rounded-lg bg-slate-100 flex items-center justify-center">${p.icone || '📍'}</span>
+          <div class="min-w-0 flex-1">
+            <span class="font-bold text-slate-800 text-[11px] block truncate">${escapeHtml(p.nome)}</span>
+            <div class="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
+              <span class="font-bold text-blue-600">${escapeHtml(p.distancia)}</span>
+              <span>•</span>
+              <span>${escapeHtml(p.tempo)}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      containerPontos.classList.add('hidden');
+    }
+  }
+
   // Prepara Simulador de Financiamento
   configurarSimuladorModal(imovel);
 
@@ -1158,6 +1188,8 @@ function configurarWidgetSofiaIA() {
       <div class="px-3 py-2 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto text-[11px] no-scrollbar">
         <button class="chip-sofia px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-semibold whitespace-nowrap transition cursor-pointer" data-msg="Quero ver coberturas e apartamentos à venda">🏢 Coberturas</button>
         <button class="chip-sofia px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-semibold whitespace-nowrap transition cursor-pointer" data-msg="Quero opções de imóveis para alugar">🔑 Aluguel</button>
+        <button class="chip-sofia px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-semibold whitespace-nowrap transition cursor-pointer" data-msg="O que tem perto dos imóveis no Bairro Jardim?">📍 O que tem perto?</button>
+        <button class="chip-sofia px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-semibold whitespace-nowrap transition cursor-pointer" data-msg="Gostaria de agendar uma visita amanhã!">📅 Agendar Visita</button>
         <button class="chip-sofia px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-semibold whitespace-nowrap transition cursor-pointer" data-msg="Gostaria de conhecer lançamentos na planta">🏗️ Lançamentos</button>
         <button class="chip-sofia px-2.5 py-1 rounded-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 font-semibold whitespace-nowrap transition cursor-pointer" data-msg="Gostaria de falar com um corretor humano no WhatsApp">💬 WhatsApp</button>
       </div>
@@ -1264,7 +1296,7 @@ function configurarWidgetSofiaIA() {
       divBot.innerHTML = `
         <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs flex-shrink-0 font-bold">✨</div>
         <div class="sofia-msg-bubble">
-          <div>${escapeHtml(resultado.respostaTexto)}</div>
+          <div class="whitespace-pre-line leading-relaxed text-xs">${escapeHtml(resultado.respostaTexto)}</div>
           ${cardsHtml}
           <div class="mt-2 pt-2 border-t border-slate-100 flex justify-end">
             <a href="${resultado.waLink}" target="_blank" class="inline-flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold text-[11px] px-3 py-1.5 rounded-lg transition shadow-sm">
