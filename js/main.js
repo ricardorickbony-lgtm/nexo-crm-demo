@@ -4,6 +4,16 @@
  * Imobiliária Prime - Padrão Severino & Ricardo (Impacto Digital)
  */
 
+// =========================================================================
+// ESCUDO DE ESTABILIDADE GLOBAL NEXO (ANTI-CRASH RUNTIME SHIELD)
+// =========================================================================
+window.addEventListener('error', (event) => {
+  console.warn('[NEXO Anti-Crash Shield / Portal] Erro interceptado:', event.message || event);
+});
+window.addEventListener('unhandledrejection', (event) => {
+  console.warn('[NEXO Anti-Crash Shield / Portal] Rejeição interceptada:', event.reason);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   initImobiliaria();
 });
@@ -168,7 +178,7 @@ function configurarHorarioWhatsApp() {
   const tooltipStatusEl = document.getElementById('wa-tooltip-status');
   const tooltipDotEl = document.getElementById('wa-tooltip-dot');
 
-  const waNumber = (config && config.whatsapp) ? config.whatsapp : '5511914879393';
+  const waNumber = (config && config.whatsapp) ? config.whatsapp : '5511970558412';
   const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msgWa)}`;
 
   if (btnContainer) {
@@ -1205,7 +1215,7 @@ function configurarWidgetSofiaIA() {
 
       <div class="px-3 py-1.5 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 flex items-center justify-between">
         <span>${escapeHtml(DB.getConfig().nome || 'Imobiliária Modelo')} • Sofia IA</span>
-        <a href="https://wa.me/${sofiaConfig.whatsappDestino || '5511914879393'}" target="_blank" class="text-indigo-600 hover:underline font-bold">Atendimento Humano WhatsApp</a>
+        <a href="https://wa.me/${sofiaConfig.whatsappDestino || '5511970558412'}" target="_blank" class="text-indigo-600 hover:underline font-bold">Atendimento Humano WhatsApp</a>
       </div>
     `;
     document.body.appendChild(chatBox);

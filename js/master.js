@@ -355,7 +355,7 @@ async function abrirModalCobrancaPixCliente(clienteId, tipo = 'mensalidade') {
   } else {
     cliente = DB.getClientesMaster()[0] || {
       nomeImobiliaria: 'Imobiliária Parceira',
-      whatsapp: '11914879393',
+      whatsapp: '11970558412',
       planoId: 'prime',
       valorMensal: 150.00
     };

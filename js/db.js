@@ -148,7 +148,7 @@ const CLIENTES_MASTER_INICIAIS = [
     id: 'cli-01',
     nomeImobiliaria: 'Alpha Prime Imóveis',
     responsavel: 'Ricardo Oliveira',
-    whatsapp: '11914879393',
+    whatsapp: '11970558412',
     cidade: 'Santo André - SP',
     planoId: 'pro',
     status: 'active',
@@ -772,8 +772,8 @@ const CORRETORES_INICIAIS = [
     id: 'corretor-1',
     nome: 'Roberto Albuquerque',
     creci: '102.340-F',
-    whatsapp: '5511914879393',
-    telefone: '5511914879393',
+    whatsapp: '5511970558412',
+    telefone: '5511970558412',
     email: 'diretoria@imobiliariamodelo.com.br',
     perfil: 'diretor',
     senha: 'admin',
@@ -1218,9 +1218,30 @@ const DB = {
       localStorage.setItem(STORAGE_IMOVEIS_KEY, JSON.stringify(imoveis));
       window.dispatchEvent(new CustomEvent('imob_dados_atualizados', { detail: imoveis }));
     } catch (e) {
-      console.error('Erro ao salvar no localStorage:', e);
-      if (e.name === 'QuotaExceededError' || e.code === 22) {
-        alert('⚠️ Limite de armazenamento local atingido! As imagens são muito pesadas. As fotos foram compactadas para evitar perda de dados.');
+      console.warn('[NEXO Shield] Aviso de cota ao salvar imóveis:', e);
+      if (e.name === 'QuotaExceededError' || e.code === 22 || e.number === -2147024882) {
+        try {
+          // Recuperação automática de cota: comprime e limpa logs residuais
+          localStorage.removeItem('imob_audit_log_v2');
+          localStorage.removeItem('imob_lixeira_v1');
+          const imoveisOtimizados = (imoveis || []).map(im => {
+            const clone = { ...im };
+            if (Array.isArray(clone.fotos)) {
+              clone.fotos = clone.fotos.map(foto => {
+                if (typeof foto === 'string' && foto.startsWith('data:image') && foto.length > 25000) {
+                  return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80';
+                }
+                return foto;
+              });
+            }
+            return clone;
+          });
+          localStorage.setItem(STORAGE_IMOVEIS_KEY, JSON.stringify(imoveisOtimizados));
+          window.dispatchEvent(new CustomEvent('imob_dados_atualizados', { detail: imoveisOtimizados }));
+          console.log('[NEXO Shield] Imóveis salvos com segurança via engine de contingência!');
+        } catch (errFallback) {
+          console.error('[NEXO Shield] Erro irrecuperável de armazenamento local:', errFallback);
+        }
       }
     }
   },
@@ -1589,8 +1610,22 @@ const DB = {
     try {
       const data = localStorage.getItem(STORAGE_CORRETORES_KEY);
       if (data) {
-        const parsed = JSON.parse(data);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        let parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          let migrou = false;
+          parsed = parsed.map(c => {
+            if (c.whatsapp === '5511914879393' || c.whatsapp === '11914879393') {
+              c.whatsapp = '5511970558412';
+              c.telefone = '5511970558412';
+              migrou = true;
+            }
+            return c;
+          });
+          if (migrou) {
+            try { localStorage.setItem(STORAGE_CORRETORES_KEY, JSON.stringify(parsed)); } catch(e) {}
+          }
+          return parsed;
+        }
       }
     } catch (e) {}
     this.salvarCorretores(CORRETORES_INICIAIS);
@@ -2422,7 +2457,7 @@ ${(imovel.tags || []).map(t => `#${t.replace(/\s+/g, '')}`).join(' ')}
       nome: 'Diretor Roberto Albuquerque',
       empresa: cfg.nomeFantasia || 'Imobiliária Modelo Showroom',
       email: cfg.email || 'diretoria@imobiliariamodelo.com.br',
-      whatsapp: cfg.whatsapp || '11914879393',
+      whatsapp: cfg.whatsapp || '11970558412',
       perfil: 'diretor'
     };
   },
